@@ -8,7 +8,7 @@
 typedef struct Aluno {
     int RA;
     char nome[50];
-    //char telefone[15];
+    char telefone[15];
 } Aluno;
 
 typedef struct Disciplina {

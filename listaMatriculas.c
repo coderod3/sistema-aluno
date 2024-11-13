@@ -74,6 +74,7 @@ void remover(Lista *lista, const int codigo) {
 }
 
 Node* buscaBinaria(Lista *lista, int RA_desejado) {
+    selectionSort(lista);
     int inicio = 0, index_meio = 0;
     int fim = lista->size - 1;
     Node *node_meio;
@@ -90,6 +91,7 @@ Node* buscaBinaria(Lista *lista, int RA_desejado) {
         }
 
         int ra_meio = node_meio->registro->aluno->RA;
+
         if (ra_meio == RA_desejado) {
             return node_meio;  // Encontrou o RA
         }
@@ -101,6 +103,7 @@ Node* buscaBinaria(Lista *lista, int RA_desejado) {
             inicio = index_meio + 1;
         }
     }
+
     return NULL;
 }
 
@@ -109,9 +112,11 @@ void selectionSort(Lista *lista) {
 
     while (node_atual != NULL) {
         // declaracoes
-        int menor_RA = node_atual->registro->aluno->RA;;
-        Node *node_auxiliar = node_atual;
+        int menor_RA = node_atual->registro->aluno->RA;
+        // node do menor RA encontrado
         Node *menor_node = node_atual;
+        // node auxiliar para percorrer a lista
+        Node *node_auxiliar = node_atual;
 
         while(node_auxiliar != NULL) {  // econtrando o menor RA
 

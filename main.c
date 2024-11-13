@@ -1,33 +1,42 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "listaMatriculas.h"
 
-/*
- * Gabriel  -
- * David Camara -
- * Rodrigo de Araujo Amaro - 841935
- *
- */
 
-void lerString(char *str, int size) {
+//Gabriel Barbosa dos Santos - 841923
+//David Camara - 841925
+//Rodrigo de Araujo Amaro - 841935
+
+void stringInput(char *str, int size) {
     fgets(str, size, stdin);
     str[strcspn(str, "\n")] = '\0';
 }
+int inteiroInput() {
+    char input[10];
 
-void menu() {
-    printf("\n\n===== MENU =====\n");
-    printf("1. Inserir aluno\n");
-    printf("2. Remover aluno\n");
-    printf("3. Exibir lista\n");
-    printf("4. Ordenar lista (Selection Sort)\n");
-    printf("5. Consultar aluno (Pesquisa Binaria)\n");
-    printf("0. Sair\n");
-    printf("================\n");
-    printf("Escolha uma opcao: ");
+    while (1) {
+        fgets(input, sizeof(input), stdin);
+
+        input[strcspn(input, "\n")] = '\0';
+
+        int isNumber = 1;
+        for (int i = 0; i < strlen(input); i++) {
+            if (!isdigit(input[i])) {
+                isNumber = 0;
+                break;
+            }
+        }
+
+        if (isNumber) {
+            const int valor = atoi(input);
+            return valor;
+        }
+        printf("Entrada invalida. Por favor, insira um numero inteiro.\n");
+    }
 }
-
-Lista *preenchimentoAutomatico(Lista *lista1) {
+Lista *preenchimentoAutomatico(Lista *lista1) { // para testes
     // Alocando estruturas dinamicamente:
 
     // Alocando alunos
@@ -119,19 +128,38 @@ Lista *preenchimentoAutomatico(Lista *lista1) {
         inserir(lista1, novo_node);
     }
 
-    // Testes:
+    //---------------Testes:-----------------//
     printf("\nTamanho: %d\n\nLista Atual:", lista1->size);
-    display(lista1);
+    display(lista1); // lista desorganizada
+
     printf("\n\nAplicando Selection Sort:");
     selectionSort(lista1);
     display(lista1);
+
     printf("\n\nBuscando com Binary Search:\n");
-    int codBusca = 3;
+    int codBusca = 3; // cod de exemplo
     Node *resultado = buscaBinaria(lista1, codBusca);
-    printf("Cod Busca %d: %s", codBusca, resultado->registro->aluno->nome);
+    printf("\nCod:  Aluno:    Telefone:      | Grade:");
+    printf("\n%d      %s    %s |  ", resultado->registro->aluno->RA, resultado->registro->aluno->nome, resultado->registro->aluno->telefone);
+    // loop de cada materia do aluno de exemplo
+    for (int i = 0; i < resultado->registro->grade->num_disciplinas; i++) {
+        printf("%d %s  ", resultado->registro->grade->disciplinas[i].etapa, resultado->registro->grade->disciplinas[i].disciplina);
+    }
 
     return lista1;
 }
+void menu() {
+    printf("\n\n===== MENU =====\n");
+    printf("1. Inserir aluno\n");
+    printf("2. Remover aluno\n");
+    printf("3. Exibir lista\n");
+    printf("4. Ordenar lista (Selection Sort)\n");
+    printf("5. Consultar aluno (Pesquisa Binaria)\n");
+    printf("0. Sair\n");
+    printf("================\n");
+    printf("Escolha uma opcao: ");
+}
+
 
 int main(void) {
     Lista *lista1 = (Lista*)malloc(sizeof(Lista));
@@ -150,23 +178,21 @@ int main(void) {
 
     do{
         menu();
-        scanf("%d", &opcao);
+        opcao = inteiroInput();
         switch (opcao) {
             case 1:  // Inserir aluno
                 novo_aluno = (Aluno*)malloc(sizeof(Aluno));
                 Grade *grade1 = (Grade*)malloc(sizeof(Grade));
                 grade1->num_disciplinas = 0;
                 printf("Digite o RA do aluno: ");
-                scanf("%d", &novo_aluno->RA);
+                novo_aluno->RA = inteiroInput();
 
                 printf("Digite o nome do aluno: ");
-                lerString(nome, sizeof(nome));
-                //scanf("%s", nome);
+                stringInput(nome, sizeof(nome));
                 strcpy(novo_aluno->nome, nome);
 
                 printf("Digite o telefone do aluno: ");
-                lerString(telefone, sizeof(telefone));
-                //scanf("%s", telefone);
+                stringInput(telefone, sizeof(telefone));
                 strcpy(novo_aluno->telefone, telefone);
 
                 // preencher grade
@@ -175,9 +201,9 @@ int main(void) {
                     char nome_disciplina[10];
 
                     printf("Digite a etapa da grade: ");
-                    scanf("%d", &disciplina.etapa);
+                    disciplina.etapa = inteiroInput();
                     printf("Digite o nome da disciplina: ");
-                    scanf("%s", nome_disciplina);
+                    stringInput(nome_disciplina, sizeof(nome_disciplina));
                     strcpy(disciplina.disciplina, nome_disciplina);
 
                     grade1->disciplinas[grade1->num_disciplinas] = disciplina;
@@ -185,7 +211,7 @@ int main(void) {
 
                     int op;
                     printf("Deseja adicionar mais disciplinas?[sim: 1][nao: 0]");
-                    scanf("%d", &op);
+                    op = inteiroInput();
                     if (op == 0) {
                         break;
                     }
@@ -210,7 +236,7 @@ int main(void) {
 
             case 2:  // Remover aluno
                 printf("Digite o RA do aluno que deseja remover: ");
-                scanf("%d", &RA);
+                RA = inteiroInput();
                 remover(lista1, RA);
                 break;
 
@@ -226,7 +252,8 @@ int main(void) {
 
             case 5:  // Buscar aluno (Pesquisa Binaria)
                 printf("Digite o RA do aluno que deseja buscar: ");
-                scanf("%d", &RA);
+                RA = inteiroInput();
+                //scanf("%d", &RA);
 
                 Node *resultado =  buscaBinaria(lista1, RA);
                 if (resultado != NULL) {
